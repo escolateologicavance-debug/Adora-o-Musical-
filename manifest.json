@@ -1,0 +1,22 @@
+{
+"name": "Músicas Sacras",
+"short_name": "Sacras",
+"description": "Coleção de músicas sacras de Gilberto",
+"start_url": "./",
+"display": "standalone",
+"background_color": "#0b1320",
+"theme_color": "#0b1320",
+"orientation": "portrait",
+"icons": [
+{
+"src": "logo-192.png",
+"sizes": "192x192",
+"type": "image/png"
+},
+{
+"src": "logo-512.png",
+"sizes": "512x512",
+"type": "image/png"
+}
+ ]
+}

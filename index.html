@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gilberto Music</title>
+
+<meta name="theme-color" content="#0b1320">
+<meta name="description" content="Músicas Sacras de Gilberto">
+
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="logo-192.png">
+<link rel="apple-touch-icon" href="logo-192.png">
+
+<style>
+body{
+background:linear-gradient(180deg,#0b1320,#162033,#0b1320);
+min-height:100vh;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+font-family: sans-serif;
+}
+
+.player{
+width:100%;
+max-width:450px;
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(12px);
+border-radius:25px;
+overflow:hidden;
+box-shadow:0 0 30px rgba(0,0,0,.4);
+}
+
+.capa{
+width:100%;
+aspect-ratio:1/1;
+overflow:hidden;
+}
+
+.capa img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.info{
+text-align:center;
+padding:20px;
+}
+
+.info h1{
+font-size:1.8rem;
+margin-bottom:5px;
+}
+
+.info p{
+opacity:.8;
+font-size: 1rem;
+margin-bottom: 10px;
+}
+
+#musica-atual {
+font-weight: bold;
+color: #00ff88;
+margin-top: 10px;
+font-size: 1.1rem;
+}
+
+.controles{
+padding:0 20px 20px 20px;
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+}
+
+button{
+border:none;
+background:#ffffff15;
+color:white;
+padding:14px;
+border-radius:12px;
+cursor:pointer;
+font-size:15px;
+transition:.3s;
+text-align:center;
+}
+
+button:hover{
+background:#ffffff30;
+}
+
+/* Lista de reprodução visual */
+.playlist-container {
+max-height: 200px;
+overflow-y: auto;
+padding: 10px 20px;
+border-top: 1px solid rgba(255,255,255,.1);
+background: rgba(0,0,0,0.1);
+}
+
+.playlist-item {
+padding: 10px;
+border-bottom: 1px solid rgba(255,255,255,0.05);
+cursor: pointer;
+transition: 0.2s;
+font-size: 14px;
+}
+
+.playlist-item:hover {
+background: rgba(255,255,255,0.1);
+}
+
+audio{
+display:none;
+}
+
+footer{
+text-align:center;
+padding:20px;
+font-size:.9rem;
+color:#ddd;
+border-top:1px solid rgba(255,255,255,.1);
+}
+
+footer span{
+display:block;
+margin-top:4px;
+}
+</style>
+</head>
+<body>
+
+<div class="player">
+
+<div class="capa">
+<img src="logo-512.png" alt="Capa">
+</div>
+
+<div class="info">
+<h1>Músicas Sacras</h1>
+<p>Adoração • Fé • Esperança</p>
+<!-- Mostra o nome da música que está tocando agora -->
+<div id="musica-atual">Selecione uma música</div>
+</div>
+
+<audio id="audio"></audio>
+
+<div class="controles">
+<button onclick="tocar()">Play / Pause</button>
+<button onclick="parar()">Parar</button>
+<button onclick="volumeMais()">Vol +</button>
+<button onclick="volumeMenos()">Vol -</button>
+</div>
+
+<!-- Lista onde o usuário clica para tocar -->
+<div class="playlist-container" id="lista-html"></div>
+
+<footer>
+<strong>Gilberto Production</strong>
+<span>Made in Brazil 🇧🇷</span>
+</footer>
+
+</div>
+
+<script>
+const playlist = [
+{titulo:"A Mulher de Ló",arquivo:"a-mulher-de-lo.mp3"},
+{titulo:"Alguém",arquivo:"alguem.mp3"},
+{titulo:"As Batidas do Coração",arquivo:"as-batidas-do-coracao.mp3"},
+{titulo:"Cabine",arquivo:"cabine.mp3"},
+{titulo:"Cambaleios e Aventuras",arquivo:"cambaleios-e-aventuras.mp3"},
+{titulo:"Chego Lá",arquivo:"chego-la.mp3"},
+{titulo:"Deus e o Homem",arquivo:"deus-e-o-homem-mixed.mp3"},
+{titulo:"Era do Gelo",arquivo:"era-do-gelo.mp3"},
+{titulo:"Esse Esfriamento... o Amor",arquivo:"esse-esfriamento-o-amor.mp3"},
+{titulo:"Felicidade",arquivo:"felicidade.mp3"},
+{titulo:"Ferrões do Destino",arquivo:"ferroes-do-destino.mp3"},
+{titulo:"Jesus é o Bom Pastor",arquivo:"jesus-e-o-bom-pastor.mp3"},
+{titulo:"Joel 2.28",arquivo:"joel-2-28.mp3"},
+{titulo:"Meu Socorro",arquivo:"meu-socorro.mp3"},
+{titulo:"O Crente Não Joga a Toalha",arquivo:"o-crente-nao-joga-a-toalha.mp3"},
+{titulo:"O Sentido da Missão",arquivo:"o-sentido-da-missao-mixed.mp3"},
+{titulo:"Olha a Vida",arquivo:"olha-a-vida.mp3"},
+{titulo:"Passará",arquivo:"passara.mp3"},
+{titulo:"Passe a Madrugada",arquivo:"passe-a-madrugada.mp3"},
+{titulo:"Perambulando",arquivo:"perambulando.mp3"},
+{titulo:"Pode Levantar",arquivo:"pode-levantar.mp3"},
+{titulo:"Preciso de Ti Jesus",arquivo:"preciso-de-ti-jesus.mp3"},
+{titulo:"Refúgio e Fortaleza",arquivo:"refugio-e-fortaleza.mp3"},
+{titulo:"Rei Contra Lepra",arquivo:"rei-contra-lepra.mp3"},
+{titulo:"Relatividade",arquivo:"relatividade-mixed.mp3"},
+{titulo:"Teu Amor",arquivo:"teu-amor.mp3"},
+{titulo:"Você",arquivo:"voce.mp3"}
+];
+
+const audio = document.getElementById('audio');
+const tagMusicaAtual = document.getElementById('musica-atual');
+const tagLista = document.getElementById('lista-html');
+
+let indiceAtual = 0;
+
+// Renderiza a lista de músicas na tela de forma dinâmica
+playlist.forEach((musica, index) => {
+const item = document.createElement('div');
+item.classList.add('playlist-item');
+item.innerText = ${index + 1}. ${musica.titulo};
+item.onclick = () => carregarEMusicar(index);
+tagLista.appendChild(item);
+});
+
+// Carrega a primeira faixa sem dar play automático
+if(playlist.length > 0) {
+configurarFaixa(0);
+}
+
+function configurarFaixa(index) {
+indiceAtual = index;
+audio.src = playlist[index].arquivo;
+tagMusicaAtual.innerText = playlist[index].titulo;
+}
+
+function carregarEMusicar(index) {
+configurarFaixa(index);
+audio.play();
+}
+
+function tocar(){
+if(!audio.src && playlist.length > 0) {
+configurarFaixa(0);
+}
+if(audio.paused){
+audio.play();
+}else{
+audio.pause();
+}
+}
+
+function parar(){
+audio.pause();
+audio.currentTime = 0;
+}
+
+function volumeMais(){
+if(audio.volume < 1){
+audio.volume = Math.min(1, audio.volume + 0.1);
+}
+}
+
+function volumeMenos(){
+if(audio.volume > 0){
+audio.volume = Math.max(0, audio.volume - 0.1);
+}
+}
+
+/* Avança automaticamente para a próxima música quando a atual terminar */
+audio.onended = function() {
+if(indiceAtual + 1 < playlist.length) {
+carregarEMusicar(indiceAtual + 1);
+} else {
+carregarEMusicar(0); // Reinicia na primeira
+}
+};
+
+/* Registro do Service Worker */
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('./sw.js');
+});
+}
+</script>
+
+</body>
+</html>
