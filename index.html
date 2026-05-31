@@ -143,7 +143,6 @@ margin-top:4px;
 <div class="info">
 <h1>AdoraçãoMusical</h1>
 <p>Adoração • Fé • Esperança</p>
-<!-- Mostra o nome da música que está tocando agora -->
 <div id="musica-atual">Selecione uma música</div>
 </div>
 
@@ -156,7 +155,6 @@ margin-top:4px;
 <button onclick="volumeMenos()">Vol -</button>
 </div>
 
-<!-- Lista onde o usuário clica para tocar -->
 <div class="playlist-container" id="lista-html"></div>
 
 <footer>
@@ -165,6 +163,7 @@ margin-top:4px;
 </footer>
 
 </div>
+
 <script>
 const playlist = [
 {titulo:"A Mulher de Ló",arquivo:"a-mulher-de-lo.mp3"},
@@ -239,8 +238,40 @@ audio.play();
 audio.pause();
 }
 }
-</script>
 
+function parar(){
+audio.pause();
+audio.currentTime = 0;
+}
+
+function volumeMais(){
+if(audio.volume < 1){
+audio.volume = Math.min(1, audio.volume + 0.1);
+}
+}
+
+function volumeMenos(){
+if(audio.volume > 0){
+audio.volume = Math.max(0, audio.volume - 0.1);
+}
+}
+
+/* Avança automaticamente para a próxima faixa */
+audio.onended = function() {
+if(indiceAtual + 1 < playlist.length) {
+carregarEMusicar(indiceAtual + 1);
+} else {
+carregarEMusicar(0);
+}
+};
+
+/* Registro do Service Worker do PWA */
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('./sw.js');
+});
+}
+</script>
 
 </body>
 </html>
