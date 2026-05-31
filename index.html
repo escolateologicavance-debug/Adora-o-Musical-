@@ -141,7 +141,7 @@ margin-top:4px;
 </div>
 
 <div class="info">
-<h1>Músicas Sacras</h1>
+<h1>AdoraçãoMusical</h1>
 <p>Adoração • Fé • Esperança</p>
 <!-- Mostra o nome da música que está tocando agora -->
 <div id="musica-atual">Selecione uma música</div>
@@ -165,36 +165,36 @@ margin-top:4px;
 </footer>
 
 </div>
-
 <script>
 const playlist = [
 {titulo:"A Mulher de Ló",arquivo:"a-mulher-de-lo.mp3"},
 {titulo:"Alguém",arquivo:"alguem.mp3"},
-{titulo:"As Batidas do Coração",arquivo:"as-batidas-do-coracao.mp3"},
+{titulo:"As Batidas do Coração",arquivo:"as-batidas-do-coração .mp3"},
 {titulo:"Cabine",arquivo:"cabine.mp3"},
 {titulo:"Cambaleios e Aventuras",arquivo:"cambaleios-e-aventuras.mp3"},
 {titulo:"Chego Lá",arquivo:"chego-la.mp3"},
 {titulo:"Deus e o Homem",arquivo:"deus-e-o-homem-mixed.mp3"},
 {titulo:"Era do Gelo",arquivo:"era-do-gelo.mp3"},
+{titulo:"Esperavam Alguém",arquivo:"esperavam-alguem.mp3"},
 {titulo:"Esse Esfriamento... o Amor",arquivo:"esse-esfriamento-o-amor.mp3"},
 {titulo:"Felicidade",arquivo:"felicidade.mp3"},
 {titulo:"Ferrões do Destino",arquivo:"ferroes-do-destino.mp3"},
 {titulo:"Jesus é o Bom Pastor",arquivo:"jesus-e-o-bom-pastor.mp3"},
 {titulo:"Joel 2.28",arquivo:"joel-2-28.mp3"},
 {titulo:"Meu Socorro",arquivo:"meu-socorro.mp3"},
+{titulo:"Não Existe Cruz de Veludo",arquivo:"não-existe-cruz-de-veludo.mp3"},
 {titulo:"O Crente Não Joga a Toalha",arquivo:"o-crente-nao-joga-a-toalha.mp3"},
-{titulo:"O Sentido da Missão",arquivo:"o-sentido-da-missao-mixed.mp3"},
+{titulo:"O Sentido da Minha Vida é Jesus",arquivo:"o Sentido da minha vida é Jesus_backing_vocals_mixed.mp3"},
 {titulo:"Olha a Vida",arquivo:"olha-a-vida.mp3"},
-{titulo:"Passará",arquivo:"passara.mp3"},
+{titulo:"Passará",arquivo:"Passará.mp3"},
 {titulo:"Passe a Madrugada",arquivo:"passe-a-madrugada.mp3"},
-{titulo:"Perambulando",arquivo:"perambulando.mp3"},
+{titulo:"Perambulando",arquivo:"perambulando .mp3"},
 {titulo:"Pode Levantar",arquivo:"pode-levantar.mp3"},
 {titulo:"Preciso de Ti Jesus",arquivo:"preciso-de-ti-jesus.mp3"},
 {titulo:"Refúgio e Fortaleza",arquivo:"refugio-e-fortaleza.mp3"},
-{titulo:"Rei Contra Lepra",arquivo:"rei-contra-lepra.mp3"},
-{titulo:"Relatividade",arquivo:"relatividade-mixed.mp3"},
+{titulo:"Relatividade",arquivo:"relatividade.mp3"},
 {titulo:"Teu Amor",arquivo:"teu-amor.mp3"},
-{titulo:"Você",arquivo:"voce.mp3"}
+{titulo:"Você",arquivo:"você.mp3"}
 ];
 
 const audio = document.getElementById('audio');
@@ -207,7 +207,7 @@ let indiceAtual = 0;
 playlist.forEach((musica, index) => {
 const item = document.createElement('div');
 item.classList.add('playlist-item');
-item.innerText = ${index + 1}. ${musica.titulo};
+item.innerText = `${index + 1}. ${musica.titulo}`;
 item.onclick = () => carregarEMusicar(index);
 tagLista.appendChild(item);
 });
@@ -219,7 +219,8 @@ configurarFaixa(0);
 
 function configurarFaixa(index) {
 indiceAtual = index;
-audio.src = playlist[index].arquivo;
+// encodeURI resolve problemas com espaços e acentos nos links do GitHub
+audio.src = encodeURI(playlist[index].arquivo);
 tagMusicaAtual.innerText = playlist[index].titulo;
 }
 
@@ -238,40 +239,8 @@ audio.play();
 audio.pause();
 }
 }
-
-function parar(){
-audio.pause();
-audio.currentTime = 0;
-}
-
-function volumeMais(){
-if(audio.volume < 1){
-audio.volume = Math.min(1, audio.volume + 0.1);
-}
-}
-
-function volumeMenos(){
-if(audio.volume > 0){
-audio.volume = Math.max(0, audio.volume - 0.1);
-}
-}
-
-/* Avança automaticamente para a próxima música quando a atual terminar */
-audio.onended = function() {
-if(indiceAtual + 1 < playlist.length) {
-carregarEMusicar(indiceAtual + 1);
-} else {
-carregarEMusicar(0); // Reinicia na primeira
-}
-};
-
-/* Registro do Service Worker */
-if ('serviceWorker' in navigator) {
-window.addEventListener('load', () => {
-navigator.serviceWorker.register('./sw.js');
-});
-}
 </script>
+
 
 </body>
 </html>
